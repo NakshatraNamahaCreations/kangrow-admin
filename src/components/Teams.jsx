@@ -666,7 +666,7 @@ function Teams() {
 
   const fetchTeams = async () => {
     try {
-      const res = await axios.get("http://192.168.1.230:8011/api/teams");
+      const res = await axios.get("https://api.svkangrowhealth.com/api/teams");
       const members = res.data.members || [];
       setTeams(members);
       setTotalPages(Math.ceil(members.length / itemsPerPage) || 1);
@@ -724,7 +724,7 @@ function Teams() {
         }
 
         const response = await axios.put(
-          `http://192.168.1.230:8011/api/teams/update/${modalData.id}`,
+          `https://api.svkangrowhealth.com/api/teams/update/${modalData.id}`,
           updateData
         );
 
@@ -756,7 +756,7 @@ function Teams() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this team member?")) {
       try {
-        await axios.delete(`http://192.168.1.230:8011/api/teams/delete/${id}`);
+        await axios.delete(`https://api.svkangrowhealth.com/api/teams/delete/${id}`);
         setTeams((prev) => prev.filter((t) => t._id !== id));
         fetchTeams();
       } catch (error) {

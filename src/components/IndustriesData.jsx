@@ -340,7 +340,7 @@ function IndustriesData() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Base API URL
-  const API_URL = "http://192.168.1.230:8011/api/industries";
+  const API_URL = "https://api.svkangrowhealth.com/api/industries";
 
   // Fetch all industries on component mount
   useEffect(() => {

@@ -24,7 +24,7 @@ const Settings = () => {
       const imageUrl = admin.profilePicture
         ? admin.profilePicture.startsWith("http")
           ? admin.profilePicture
-          : `http://192.168.1.230:8011${admin.profilePicture}`
+          : `https://api.svkangrowhealth.com${admin.profilePicture}`
         : null;
       setProfileImage(imageUrl);
       console.log("Initial profile image URL:", imageUrl);
@@ -64,7 +64,7 @@ const Settings = () => {
 
     try {
       const response = await axios.put(
-        `http://192.168.1.230:8011/api/admin/update/${userId}`,
+        `https://api.svkangrowhealth.com/api/admin/update/${userId}`,
         formData,
         {
           headers: {
@@ -81,7 +81,7 @@ const Settings = () => {
       const newImageUrl = updatedAdmin.profilePicture
         ? updatedAdmin.profilePicture.startsWith("http")
           ? updatedAdmin.profilePicture
-          : `http://192.168.1.230:8011${updatedAdmin.profilePicture}`
+          : `https://api.svkangrowhealth.com${updatedAdmin.profilePicture}`
         : null;
       setProfileImage(newImageUrl);
       setPreviewImage(null);

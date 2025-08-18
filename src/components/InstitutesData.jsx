@@ -342,7 +342,7 @@ function InstitutesData() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Base API URL
-  const API_URL = "http://192.168.1.230:8011/api/institutes";
+  const API_URL = "https://api.svkangrowhealth.com/api/institutes";
 
   // Fetch all institutes on component mount
   useEffect(() => {

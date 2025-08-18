@@ -439,7 +439,7 @@ function SchoolData() {
     const fetchSchools = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.230:8011/api/schools"
+          "https://api.svkangrowhealth.com/api/schools"
         );
         setSchools(response.data.schools);
       } catch (error) {
@@ -472,7 +472,7 @@ function SchoolData() {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.230:8011/api/schools/create",
+        "https://api.svkangrowhealth.com/api/schools/create",
         { schoolName: trimmed }
       );
       setSchools([response.data.school, ...schools]);
@@ -499,7 +499,7 @@ function SchoolData() {
 
     try {
       const response = await axios.put(
-        `http://192.168.1.230:8011/api/schools/update/${editSchoolId}`,
+        `https://api.svkangrowhealth.com/api/schools/update/${editSchoolId}`,
         { schoolName: editSchoolName.trim() }
       );
       setSchools((prev) =>
@@ -534,7 +534,7 @@ function SchoolData() {
     try {
       setIsDeleting(true);
       await axios.delete(
-        `http://192.168.1.230:8011/api/schools/delete/${deleteTarget.id}`
+        `https://api.svkangrowhealth.com/api/schools/delete/${deleteTarget.id}`
       );
 
       // Update list

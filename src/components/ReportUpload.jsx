@@ -22,7 +22,7 @@ const ReportUpload = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [reportsPerPage] = useState(5);
 
-  const API_URL = "http://192.168.1.230:8011/api";
+  const API_URL = "https://api.svkangrowhealth.com/api";
 
   // format dd-MM-yy
   const formatDDMMYY = (dateLike) => {
@@ -81,7 +81,7 @@ const ReportUpload = () => {
           reportType: r.reportType,
           fileName: r.fileName,
           userUniqueId: r.userUniqueId,
-          fileUrl: `http://192.168.1.230:8011/uploads/${r.fileName}`,
+          fileUrl: `https://api.svkangrowhealth.com/uploads/${r.fileName}`,
           uploadedAt: r.createdAt || r.uploadedAt || null, // <-- use backend date if present
         }));
         setUploadedReports(formattedReports);
@@ -126,7 +126,7 @@ const ReportUpload = () => {
         reportType: upload.reportType,
         fileName: upload.fileName,
         userUniqueId: upload.userUniqueId,
-        fileUrl: `http://192.168.1.230:8011/uploads/reports/${upload.fileName}`,
+        fileUrl: `https://api.svkangrowhealth.com/uploads/reports/${upload.fileName}`,
         uploadedAt: upload.createdAt || upload.uploadedAt || nowISO, // <-- fallback to now
       }));
 

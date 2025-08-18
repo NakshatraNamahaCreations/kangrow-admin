@@ -391,9 +391,9 @@ const DashboardContent = () => {
       try {
         const [schoolsResponse, institutesResponse, industriesResponse] =
           await Promise.all([
-            fetch("http://192.168.1.230:8011/api/schools/count"),
-            fetch("http://192.168.1.230:8011/api/institutes/count"),
-            fetch("http://192.168.1.230:8011/api/industries/count"),
+            fetch("https://api.svkangrowhealth.com/api/schools/count"),
+            fetch("https://api.svkangrowhealth.com/api/institutes/count"),
+            fetch("https://api.svkangrowhealth.com/api/industries/count"),
           ]);
 
         const schoolsData = await schoolsResponse.json();

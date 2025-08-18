@@ -49,7 +49,7 @@ function BulkUser() {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.230:8011/api/users/bulk-upload",
+        "https://api.svkangrowhealth.com/api/users/bulk-upload",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
