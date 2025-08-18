@@ -1,0 +1,8 @@
+/* Custom sidebar styles */
+.sidebar-item {
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-item:hover {
+  background-color: #2d3748;
+}
