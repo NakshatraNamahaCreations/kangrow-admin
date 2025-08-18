@@ -32,7 +32,7 @@ function UserData() {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.230:8011/api/users/get"
+          "https://api.svkangrowhealth.com/api/users/get"
         );
         setUsers(response.data.data);
       } catch (error) {
@@ -52,7 +52,7 @@ function UserData() {
     try {
       if (editUserId) {
         const response = await axios.put(
-          `http://192.168.1.230:8011/api/users/update/${editUserId}`,
+          `https://api.svkangrowhealth.com/api/users/update/${editUserId}`,
           formData
         );
         setUsers(
@@ -63,7 +63,7 @@ function UserData() {
         alert("User updated successfully");
       } else {
         const response = await axios.post(
-          "http://192.168.1.230:8011/api/users/register",
+          "https://api.svkangrowhealth.com/api/users/register",
           formData
         );
         setUsers((prev) => [...prev, response.data.data]);
@@ -119,7 +119,7 @@ function UserData() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await axios.delete(`http://192.168.1.230:8011/api/users/delete/${id}`);
+        await axios.delete(`https://api.svkangrowhealth.com/api/users/delete/${id}`);
         setUsers(users.filter((user) => user._id !== id));
         alert("User deleted successfully");
         const totalPages = Math.ceil(users.length / usersPerPage);

@@ -16,7 +16,7 @@ const Banner = () => {
 
   const fetchBanners = async () => {
     try {
-      const response = await axios.get("http://192.168.1.230:8011/api/banners");
+      const response = await axios.get("https://api.svkangrowhealth.com/api/banners");
       setBanners(response.data.banners);
       setTotalPages(Math.ceil(response.data.banners.length / itemsPerPage));
     } catch (error) {
@@ -45,7 +45,7 @@ const Banner = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.230:8011/api/banners/upload",
+        "https://api.svkangrowhealth.com/api/banners/upload",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -64,7 +64,7 @@ const Banner = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this banner?")) {
       try {
-        await axios.delete(`http://192.168.1.230:8011/api/banners/${id}`);
+        await axios.delete(`https://api.svkangrowhealth.com/api/banners/${id}`);
         setBanners(banners.filter((banner) => banner._id !== id));
         fetchBanners();
       } catch (error) {
