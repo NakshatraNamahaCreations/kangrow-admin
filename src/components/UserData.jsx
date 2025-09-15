@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef} from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import toast, { Toaster } from "react-hot-toast";
+
 
 function UserData() {
   const [showForm, setShowForm] = useState(false);
@@ -12,7 +16,9 @@ function UserData() {
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(5);
   const navigate = useNavigate();
-
+    const [dateFilter, setDateFilter] = useState("all");
+ const [customStart, setCustomStart] = useState("");
+  const [customEnd, setCustomEnd] = useState("");
   const [formData, setFormData] = useState({
     name: "",
 
@@ -27,6 +33,9 @@ function UserData() {
   });
 
   const [users, setUsers] = useState([]);
+
+
+  
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -60,14 +69,14 @@ function UserData() {
             user._id === editUserId ? response.data.data : user
           )
         );
-        alert("User updated successfully");
+        toast.success("User updated successfully ✅");
       } else {
         const response = await axios.post(
           "https://api.svkangrowhealth.com/api/users/register",
           formData
         );
         setUsers((prev) => [...prev, response.data.data]);
-        alert("User added successfully");
+         toast.success("User added successfully 🎉");
       }
       setShowForm(false);
       setEditUserId(null);
@@ -85,7 +94,8 @@ function UserData() {
       setCurrentPage(1);
     } catch (error) {
       console.error("Error saving user:", error);
-      alert(error.response?.data?.error || "Failed to save user");
+    toast.error(error.response?.data?.error || "Failed to save user ❌");
+
     }
   };
 
@@ -98,7 +108,7 @@ function UserData() {
       dateOfBirth: user.dateOfBirth.split("T")[0],
       gender: user.gender,
       age: user.age,
-      father: user.mother,
+      father: user.father,
       mother: user.mother,
       place: user.place,
       status: user.status,
@@ -107,64 +117,97 @@ function UserData() {
   };
 
   // Utility function to format date to dd/mm/yyyy
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
+const formatDate = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         await axios.delete(`https://api.svkangrowhealth.com/api/users/delete/${id}`);
         setUsers(users.filter((user) => user._id !== id));
-        alert("User deleted successfully");
+         toast.success("User deleted successfully 🗑️");
         const totalPages = Math.ceil(users.length / usersPerPage);
         if (currentPage > totalPages && currentPage > 1) {
           setCurrentPage(currentPage - 1);
         }
       } catch (error) {
         console.error("Error deleting user:", error);
-        alert(error.response?.data?.error || "Failed to delete user");
+      toast.error(error.response?.data?.error || "Failed to delete user ❌");
       }
     }
   };
 
-  const handleDownloadExcel = () => {
-    const excelData = users.map((user, index) => ({
-      SL: index + 1,
-      Name: user.name,
+   const getFilteredByDate = () => {
+    if (dateFilter === "all") return users;
 
-      Phone: user.phoneNumber,
-      DOB: formatDate(user.dateOfBirth),
-      Gender: user.gender,
-      Age: user.age,
-      Father: user.father,
-      Mother: user.mother,
-      Place: user.place,
-      Status: user.status,
-    }));
+    const now = new Date();
+    let start, end;
 
-    const worksheet = XLSX.utils.json_to_sheet(excelData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+    if (dateFilter === "thisMonth") {
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    } else if (dateFilter === "lastMonth") {
+      start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      end = new Date(now.getFullYear(), now.getMonth(), 0);
+    } else if (dateFilter === "custom" && customStart && customEnd) {
+      start = new Date(customStart);
+      end = new Date(customEnd);
+    }
 
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
+    return users.filter((u) => {
+      if (!u.createdAt) return false;
+      const created = new Date(u.createdAt);
+      return created >= start && created <= end;
     });
-    const dataBlob = new Blob([excelBuffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    saveAs(dataBlob, "UserData.xlsx");
   };
 
-  const filteredUsers = users.filter((u) =>
+const handleDownloadExcel = () => {
+  // Apply BOTH date filter and search filter
+  const filtered = getFilteredByDate().filter((u) =>
     u.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const excelData = filtered.map((user, index) => ({
+    SL: index + 1,
+    Name: user.name,
+    UniqueId: user.uniqueId || user._id,
+    Phone: user.phoneNumber,
+    DOB: formatDate(user.dateOfBirth),
+    Gender: user.gender,
+    Age: user.age,
+    Father: user.father,
+    Mother: user.mother,
+    Place: user.place,
+    Status: user.status,
+    "Created Date": formatDate(user.createdAt), // 👈 formatted date
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(excelData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+
+  const excelBuffer = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array",
+  });
+  const dataBlob = new Blob([excelBuffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+  saveAs(dataBlob, "UserData.xlsx");
+};
+
+
+const filteredUsers = getFilteredByDate().filter((u) =>
+  u.name.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -172,8 +215,12 @@ function UserData() {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+
+
+
   return (
     <div style={containerStyle}>
+          <Toaster position="top-right" reverseOrder={false} />
       {showForm && (
         <div style={overlayStyle}>
           <div style={modalStyle}>
@@ -255,20 +302,63 @@ function UserData() {
         <h2 style={{ fontSize: "20px", fontWeight: 600, marginLeft: 40 }}>
           Users Details
         </h2>
-        <div style={{ display: "flex", gap: "10px", marginRight: 70 }}>
-          <button style={addBtnStyle} onClick={() => setShowForm(true)}>
-            {" "}
-            + Add User{" "}
-          </button>
+       <div style={{ display: "flex", gap: "10px", marginRight: 70 }}>
+          <select
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            style={{
+              padding: "8px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              fontSize: "14px",
+            }}
+          >
+            <option value="all">All Data</option>
+            <option value="thisMonth">This Month</option>
+            <option value="lastMonth">Last Month</option>
+            <option value="custom">Custom Period</option>
+          </select>
+
+         {dateFilter === "custom" && (
+  <>
+   <DatePicker
+      selected={customStart ? new Date(customStart) : null}
+      onChange={(date) => setCustomStart(date)}
+      dateFormat="dd/MM/yyyy"
+      placeholderText="dd/mm/yyyy"
+      customInput={
+        <input
+          style={inputStyle} 
+          readOnly
+        />
+      }
+    />
+  <DatePicker
+      selected={customEnd ? new Date(customEnd) : null}
+      onChange={(date) => setCustomEnd(date)}
+      dateFormat="dd/MM/yyyy"
+      placeholderText="dd/mm/yyyy"
+      customInput={
+        <input
+          style={inputStyle} 
+          readOnly
+        />
+      }
+    />
+
+  </>
+)}
+
+
+
           <button style={inviteBtnStyle} onClick={handleDownloadExcel}>
-            {" "}
-            Download Excel{" "}
+            Download Excel
           </button>
           <button style={inviteBtnStyles} onClick={() => navigate("/BulkUser")}>
-            {" "}
-            Add Bulk Users{" "}
+            Add Bulk Users
           </button>
         </div>
+
       </div>
 
       <input
@@ -296,7 +386,7 @@ function UserData() {
               <th style={{ ...thStyle, width: "90px" }}>Unique ID</th>
 
               <th style={{ ...thStyle, width: "90px" }}>Status</th>
-
+               <th style={{ ...thStyle, width: "110px" }}>Created Date</th>
               <th style={{ ...thStyle, width: "80px" }}>Action</th>
             </tr>
           </thead>
@@ -348,6 +438,7 @@ function UserData() {
                     {user.status === "subscribe" ? "Active" : "Inactive"}
                   </span>
                 </td>
+                    <td style={tdStyle}>{formatDate(user.createdAt)}</td>
                 <td style={{ ...tdStyle, textAlign: "center" }}>
                   <FaEdit
                     style={{
@@ -620,3 +711,10 @@ const disabledBtnStyle = {
   color: "#999",
   cursor: "not-allowed",
 };
+const customdateinput = {
+ padding: "10px 12px",
+  borderRadius: "8px",
+  border: "1px solid #ccc",
+  fontSize: "14px",
+  outline: "none",
+}
