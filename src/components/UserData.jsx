@@ -15,13 +15,19 @@ function UserData() {
   const [editUserId, setEditUserId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(5);
+<<<<<<< HEAD
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+=======
+>>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
   const navigate = useNavigate();
     const [dateFilter, setDateFilter] = useState("all");
  const [customStart, setCustomStart] = useState("");
   const [customEnd, setCustomEnd] = useState("");
+<<<<<<< HEAD
     const [categoryFilter, setCategoryFilter] = useState("all");
+=======
+>>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
   const [formData, setFormData] = useState({
     name: "",
 
@@ -150,6 +156,7 @@ const formatDate = (dateString) => {
     }
   };
 
+<<<<<<< HEAD
   //  const getFilteredByDate = () => {
   //   if (dateFilter === "all") return users;
 
@@ -210,11 +217,39 @@ const formatDate = (dateString) => {
     }
 
     return filtered;
+=======
+   const getFilteredByDate = () => {
+    if (dateFilter === "all") return users;
+
+    const now = new Date();
+    let start, end;
+
+    if (dateFilter === "thisMonth") {
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    } else if (dateFilter === "lastMonth") {
+      start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      end = new Date(now.getFullYear(), now.getMonth(), 0);
+    } else if (dateFilter === "custom" && customStart && customEnd) {
+      start = new Date(customStart);
+      end = new Date(customEnd);
+    }
+
+    return users.filter((u) => {
+      if (!u.createdAt) return false;
+      const created = new Date(u.createdAt);
+      return created >= start && created <= end;
+    });
+>>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
   };
 
 const handleDownloadExcel = () => {
   // Apply BOTH date filter and search filter
+<<<<<<< HEAD
   const filtered = getFilteredByDateAndCategory().filter((u) =>
+=======
+  const filtered = getFilteredByDate().filter((u) =>
+>>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
     u.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -229,11 +264,15 @@ const handleDownloadExcel = () => {
     Father: user.father,
     Mother: user.mother,
     Place: user.place,
+<<<<<<< HEAD
       Category: user.category || "", 
     Status:
     user.status?.toLowerCase() === "subscribe"
       ? "Subscribe"
       : "Unsubscribe",
+=======
+    Status: user.status,
+>>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
     "Created Date": formatDate(user.createdAt), // 👈 formatted date
   }));
 
@@ -251,6 +290,7 @@ const handleDownloadExcel = () => {
   saveAs(dataBlob, "UserData.xlsx");
 };
 
+<<<<<<< HEAD
 const filteredUsers = getFilteredByDateAndCategory().filter((u) =>
     u.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -259,9 +299,23 @@ const indexOfLastUser = currentPage * rowsPerPage;
 const indexOfFirstUser = indexOfLastUser - rowsPerPage;
 const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
+=======
+
+const filteredUsers = getFilteredByDate().filter((u) =>
+  u.name.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+>>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const categories = ["all", ...new Set(users.map((u) => u.category).filter(Boolean))];
+
+
+
 
 
 
@@ -362,6 +416,7 @@ const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
           Users Details
         </h2>
        <div style={{ display: "flex", gap: "10px", marginRight: 70 }}>
+<<<<<<< HEAD
 
         <select
   value={categoryFilter}
@@ -380,6 +435,8 @@ const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
   ))}
 </select>
 
+=======
+>>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
           <select
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
@@ -427,9 +484,13 @@ const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
 )}
 
 
+<<<<<<< HEAD
   <button style={addBtnStyle} onClick={() => setShowForm(true)}>
     Add New User
   </button>
+=======
+
+>>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
           <button style={inviteBtnStyle} onClick={handleDownloadExcel}>
             Download Excel
           </button>
@@ -466,8 +527,11 @@ const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
               <th style={{ ...thStyle, width: "90px" }}>Unique ID</th>
 
               <th style={{ ...thStyle, width: "90px" }}>Status</th>
+<<<<<<< HEAD
               <th style={{ ...thStyle, width: "120px" }}>Category</th>
 
+=======
+>>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
                <th style={{ ...thStyle, width: "110px" }}>Created Date</th>
               <th style={{ ...thStyle, width: "80px" }}>Action</th>
             </tr>
@@ -521,8 +585,11 @@ const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
 </span>
 
                 </td>
+<<<<<<< HEAD
                 <td style={tdStyle}>{user.category}</td>
 
+=======
+>>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
                     <td style={tdStyle}>{formatDate(user.createdAt)}</td>
                 <td style={{ ...tdStyle, textAlign: "center" }}>
                   <FaEdit
