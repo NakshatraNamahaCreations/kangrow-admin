@@ -740,7 +740,7 @@ function Teams() {
         }
         const payload = { ...modalData, password: modalData.password.trim() };
         const response = await axios.post(
-          "http://192.168.1.230:8011/api/teams/create",
+          "https://api.svkangrowhealth.com/api/teams/create",
           payload
         );
         setTeams((prev) => [response.data.member, ...prev]);
@@ -769,7 +769,7 @@ function Teams() {
     const newStatus = currentStatus === "active" ? "inactive" : "active";
     try {
       const response = await axios.put(
-        `http://192.168.1.230:8011/api/teams/update/${id}`,
+        `https://api.svkangrowhealth.com/api/teams/update/${id}`,
         { status: newStatus }
       );
       setTeams((prev) =>
