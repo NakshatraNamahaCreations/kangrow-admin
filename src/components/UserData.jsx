@@ -75,7 +75,7 @@ function UserData() {
         toast.success("User updated successfully ✅");
       } else {
         const response = await axios.post(
-          "https://api.svkangrowhealth.com/api/users/register",
+          "https://api.svkangrowhealth.comapi/users/register",
           formData
         );
         setUsers((prev) => [...prev, response.data.data]);

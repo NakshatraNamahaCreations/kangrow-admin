@@ -28,7 +28,7 @@ function BulkUser() {
     Mother: "",
     Place: "",
     Category: "",
-    status: "",
+    Status: "",
   },
 ];
 
@@ -103,7 +103,7 @@ const handleConfirmUpload = async () => {
   try {
     setLoading(true);
     const response = await axios.post(
-      "https://api.svkangrowhealth.com/api/users/bulk-upload",
+      "http://localhost:8022/api/users/bulk-upload",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
