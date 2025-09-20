@@ -24,7 +24,7 @@ const Settings = () => {
       const imageUrl = admin.profilePicture
         ? admin.profilePicture.startsWith("http")
           ? admin.profilePicture
-          : `http://localhost:8011${admin.profilePicture}`
+          : `https://api.svkangrowhealth.com${admin.profilePicture}`
         : null;
       setProfileImage(imageUrl);
       console.log("Initial profile image URL:", imageUrl);
@@ -64,7 +64,7 @@ const Settings = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:8011/api/admin/update/${userId}`,
+        `https://api.svkangrowhealth.com/api/admin/update/${userId}`,
         formData,
         {
           headers: {
@@ -81,7 +81,7 @@ const Settings = () => {
       const newImageUrl = updatedAdmin.profilePicture
         ? updatedAdmin.profilePicture.startsWith("http")
           ? updatedAdmin.profilePicture
-          : `http://localhost:8011${updatedAdmin.profilePicture}`
+          : `https://api.svkangrowhealth.com${updatedAdmin.profilePicture}`
         : null;
       setProfileImage(newImageUrl);
       setPreviewImage(null);
@@ -100,32 +100,71 @@ const Settings = () => {
   };
 
   return (
-    <div style={{
-      display: "flex", justifyContent: "center", alignItems: "center",
-      minHeight: "100vh", backgroundColor: "#f9f9f9", fontFamily: "Poppins", marginLeft:'20%', width:'100%'
-    }}>
-      <div style={{
-        display: "flex", flexDirection: "column", gap: "30px", width: "90%", maxWidth: "600px",
-        backgroundColor: "#fff", padding: "30px", borderRadius: "12px",
-        boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)"
-      }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        backgroundColor: "#f9f9f9",
+        fontFamily: "Poppins",
+        marginLeft: "20%",
+        width: "100%",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "30px",
+          width: "90%",
+          maxWidth: "600px",
+          backgroundColor: "#fff",
+          padding: "30px",
+          borderRadius: "12px",
+          boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)",
+        }}
+      >
         {/* Profile Section */}
         <div>
-          <h3 style={{ fontSize: "24px", fontWeight: "700", marginBottom: "20px" }}>Edit Profile</h3>
+          <h3
+            style={{
+              fontSize: "24px",
+              fontWeight: "700",
+              marginBottom: "20px",
+            }}
+          >
+            Edit Profile
+          </h3>
           <div style={{ textAlign: "center", marginBottom: "20px" }}>
             <img
-              src={previewImage || profileImage || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"}
+              src={
+                previewImage ||
+                profileImage ||
+                "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+              }
               alt="Profile"
               onError={handleImageError}
               style={{
-                width: "120px", height: "120px", borderRadius: "50%",
-                objectFit: "cover", border: "3px solid #38B2AC", marginBottom: "10px"
+                width: "120px",
+                height: "120px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "3px solid #0a5e52",
+                marginBottom: "10px",
               }}
             />
-            <label htmlFor="profile-image-upload" style={{
-              backgroundColor: "#38B2AC", color: "#fff", padding: "10px 18px",
-              borderRadius: "8px", cursor: "pointer", fontWeight: "500"
-            }}>
+            <label
+              htmlFor="profile-image-upload"
+              style={{
+                backgroundColor: "#38B2AC",
+                color: "#fff",
+                padding: "10px 18px",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontWeight: "500",
+              }}
+            >
               Change Picture
             </label>
             <input
@@ -142,8 +181,12 @@ const Settings = () => {
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Username"
             style={{
-              width: "100%", padding: "10px", marginBottom: "15px",
-              borderRadius: "8px", border: "1px solid #ccc", fontSize: "16px"
+              width: "100%",
+              padding: "10px",
+              marginBottom: "15px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              fontSize: "16px",
             }}
           />
           <input
@@ -152,8 +195,12 @@ const Settings = () => {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             style={{
-              width: "100%", padding: "10px", marginBottom: "15px",
-              borderRadius: "8px", border: "1px solid #ccc", fontSize: "16px"
+              width: "100%",
+              padding: "10px",
+              marginBottom: "15px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              fontSize: "16px",
             }}
           />
           <input
@@ -162,16 +209,26 @@ const Settings = () => {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="New Password (optional)"
             style={{
-              width: "100%", padding: "10px", marginBottom: "15px",
-              borderRadius: "8px", border: "1px solid #ccc", fontSize: "16px"
+              width: "100%",
+              padding: "10px",
+              marginBottom: "15px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              fontSize: "16px",
             }}
           />
           <button
             onClick={handleProfileUpdate}
             style={{
-              width: "100%", padding: "12px", backgroundColor: "#38B2AC",
-              color: "#fff", border: "none", borderRadius: "8px",
-              fontSize: "16px", fontWeight: "600", cursor: "pointer"
+              width: "100%",
+              padding: "12px",
+              backgroundColor: "#38B2AC",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "16px",
+              fontWeight: "600",
+              cursor: "pointer",
             }}
           >
             Save Changes
