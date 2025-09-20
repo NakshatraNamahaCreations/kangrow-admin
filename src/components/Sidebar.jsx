@@ -5,6 +5,7 @@ import {
   FaImage,
   FaUsers,
   FaCloudUploadAlt,
+
   FaSchool,
   FaUniversity,
   FaIndustry,
@@ -23,13 +24,16 @@ const allSidebarLinks = [
   { icon: FaUsers, label: "Teams", path: "/teams" },
 ];
 
+
 const Sidebar = () => {
-  const member = JSON.parse(localStorage.getItem("member"));
+
+    const member = JSON.parse(localStorage.getItem("member"));
   const allowedLinks = member?.selectedSidebarLinks || [];
 
-  const filteredLinks = allSidebarLinks.filter((link) =>
+  const filteredLinks = allSidebarLinks.filter(link => 
     allowedLinks.includes(link.label)
   );
+
 
   return (
     <div style={wrapperStyle}>
@@ -65,6 +69,7 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
 
 // ✅ Styles
 const wrapperStyle = {
@@ -129,13 +134,12 @@ const iconStyle = {
   fontSize: "18px",
   minWidth: "24px",
   textAlign: "center",
-  color: "#0A5E52",
 };
 
 const labelStyle = {
   marginLeft: "12px",
-  fontSize: "15px",
-  fontWeight: 600,
+  fontSize: "14px",
+  fontWeight: 500,
   opacity: 0,
   whiteSpace: "nowrap",
   transition: "opacity 0.3s ease-in-out",

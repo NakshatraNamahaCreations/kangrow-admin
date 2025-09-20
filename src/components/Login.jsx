@@ -9,6 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,13 +20,10 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await axios.post(
-        "https://api.svkangrowhealth.com/api/teams/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post("http://localhost:8011/api/teams/login", {
+        email,
+        password,
+      });
 
       if (response.data.success) {
         const { member } = response.data;
@@ -37,8 +35,7 @@ const Login = () => {
     } catch (error) {
       console.error(error);
       setError(
-        error.response?.data?.error ||
-          "Login failed. Please check your credentials and try again."
+        error.response?.data?.error || "Login failed. Please check your credentials and try again."
       );
     }
   };

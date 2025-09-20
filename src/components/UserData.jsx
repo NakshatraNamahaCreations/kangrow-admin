@@ -1,13 +1,9 @@
-import React, { useState, useEffect , useRef} from "react";
+import React, { useState, useEffect } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import toast, { Toaster } from "react-hot-toast";
-
 
 function UserData() {
   const [showForm, setShowForm] = useState(false);
@@ -15,44 +11,26 @@ function UserData() {
   const [editUserId, setEditUserId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(5);
-<<<<<<< HEAD
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-=======
->>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
   const navigate = useNavigate();
-    const [dateFilter, setDateFilter] = useState("all");
- const [customStart, setCustomStart] = useState("");
-  const [customEnd, setCustomEnd] = useState("");
-<<<<<<< HEAD
-    const [categoryFilter, setCategoryFilter] = useState("all");
-=======
->>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
+
   const [formData, setFormData] = useState({
     name: "",
-
+    email: "",
     phoneNumber: "",
     dateOfBirth: "",
     gender: "",
     age: "",
     father: "",
     mother: "",
-    place: "",
     status: "unsubscribe",
-      category: "", 
   });
 
   const [users, setUsers] = useState([]);
 
-
-  
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(
-          "https://api.svkangrowhealth.com/api/users/get"
-        );
+        const response = await axios.get("http://localhost:8011/api/users/get");
         setUsers(response.data.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -70,43 +48,31 @@ function UserData() {
     e.preventDefault();
     try {
       if (editUserId) {
-        const response = await axios.put(
-          `https://api.svkangrowhealth.com/api/users/update/${editUserId}`,
-          formData
-        );
-        setUsers(
-          users.map((user) =>
-            user._id === editUserId ? response.data.data : user
-          )
-        );
-        toast.success("User updated successfully ✅");
+        const response = await axios.put(`http://localhost:8011/api/users/update/${editUserId}`, formData);
+        setUsers(users.map((user) => (user._id === editUserId ? response.data.data : user)));
+        alert("User updated successfully");
       } else {
-        const response = await axios.post(
-          "https://api.svkangrowhealth.com/api/users/register",
-          formData
-        );
+        const response = await axios.post("http://localhost:8011/api/users/register", formData);
         setUsers((prev) => [...prev, response.data.data]);
-         toast.success("User added successfully 🎉");
+        alert("User added successfully");
       }
       setShowForm(false);
       setEditUserId(null);
       setFormData({
         name: "",
+        email: "",
         phoneNumber: "",
         dateOfBirth: "",
         gender: "",
         age: "",
         father: "",
         mother: "",
-        place: "",
-        category: "", 
         status: "unsubscribe",
       });
       setCurrentPage(1);
     } catch (error) {
       console.error("Error saving user:", error);
-    toast.error(error.response?.data?.error || "Failed to save user ❌");
-
+      alert(error.response?.data?.error || "Failed to save user");
     }
   };
 
@@ -114,249 +80,94 @@ function UserData() {
     setEditUserId(user._id);
     setFormData({
       name: user.name,
-
+      email: user.email,
       phoneNumber: user.phoneNumber,
       dateOfBirth: user.dateOfBirth.split("T")[0],
       gender: user.gender,
       age: user.age,
-      father: user.father,
+      father: user.mother,
       mother: user.mother,
-      place: user.place,
       status: user.status,
-      category: user.category || "", 
     });
     setShowForm(true);
   };
+
 
   // Utility function to format date to dd/mm/yyyy
 const formatDate = (dateString) => {
   if (!dateString) return "";
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
   const year = date.getFullYear();
   return `${day}/${month}/${year}`;
 };
 
-
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await axios.delete(`https://api.svkangrowhealth.com/api/users/delete/${id}`);
+        await axios.delete(`http://localhost:8011/api/users/delete/${id}`);
         setUsers(users.filter((user) => user._id !== id));
-         toast.success("User deleted successfully 🗑️");
+        alert("User deleted successfully");
         const totalPages = Math.ceil(users.length / usersPerPage);
         if (currentPage > totalPages && currentPage > 1) {
           setCurrentPage(currentPage - 1);
         }
       } catch (error) {
         console.error("Error deleting user:", error);
-      toast.error(error.response?.data?.error || "Failed to delete user ❌");
+        alert(error.response?.data?.error || "Failed to delete user");
       }
     }
   };
 
-<<<<<<< HEAD
-  //  const getFilteredByDate = () => {
-  //   if (dateFilter === "all") return users;
-
-  //   const now = new Date();
-  //   let start, end;
-
-  //   if (dateFilter === "thisMonth") {
-  //     start = new Date(now.getFullYear(), now.getMonth(), 1);
-  //     end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  //   } else if (dateFilter === "lastMonth") {
-  //     start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  //     end = new Date(now.getFullYear(), now.getMonth(), 0);
-  //   } else if (dateFilter === "custom" && customStart && customEnd) {
-  //     start = new Date(customStart);
-  //     end = new Date(customEnd);
-  //   }
-
-  //   return users.filter((u) => {
-  //     if (!u.createdAt) return false;
-  //     const created = new Date(u.createdAt);
-  //     return created >= start && created <= end;
-  //   });
-  // };
-
-   const getFilteredByDateAndCategory = () => {
-    let filtered = [...users];
-
-    // --- Date filter ---
-    if (dateFilter !== "all") {
-      const now = new Date();
-      let start, end;
-
-      if (dateFilter === "thisMonth") {
-        start = new Date(now.getFullYear(), now.getMonth(), 1);
-        end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-      } else if (dateFilter === "lastMonth") {
-        start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-        end = new Date(now.getFullYear(), now.getMonth(), 0);
-      } else if (dateFilter === "custom" && customStart && customEnd) {
-        start = new Date(customStart);
-        end = new Date(customEnd);
-      }
-
-      if (start && end) {
-        filtered = filtered.filter((u) => {
-          if (!u.createdAt) return false;
-          const created = new Date(u.createdAt);
-          return created >= start && created <= end;
-        });
-      }
-    }
-
-    // --- Category filter ---
-    if (categoryFilter !== "all") {
-      filtered = filtered.filter(
-        (u) => u.category?.toLowerCase() === categoryFilter.toLowerCase()
-      );
-    }
-
-    return filtered;
-=======
-   const getFilteredByDate = () => {
-    if (dateFilter === "all") return users;
-
-    const now = new Date();
-    let start, end;
-
-    if (dateFilter === "thisMonth") {
-      start = new Date(now.getFullYear(), now.getMonth(), 1);
-      end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    } else if (dateFilter === "lastMonth") {
-      start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      end = new Date(now.getFullYear(), now.getMonth(), 0);
-    } else if (dateFilter === "custom" && customStart && customEnd) {
-      start = new Date(customStart);
-      end = new Date(customEnd);
-    }
-
-    return users.filter((u) => {
-      if (!u.createdAt) return false;
-      const created = new Date(u.createdAt);
-      return created >= start && created <= end;
-    });
->>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
-  };
-
-const handleDownloadExcel = () => {
-  // Apply BOTH date filter and search filter
-<<<<<<< HEAD
-  const filtered = getFilteredByDateAndCategory().filter((u) =>
-=======
-  const filtered = getFilteredByDate().filter((u) =>
->>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
-    u.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const excelData = filtered.map((user, index) => ({
-    SL: index + 1,
-    Name: user.name,
-    UniqueId: user.uniqueId || user._id,
-    Phone: user.phoneNumber,
+  const handleDownloadExcel = () => {
+    const excelData = users.map((user, index) => ({
+      SL: index + 1,
+      Name: user.name,
+      Email: user.email,
+      Phone: user.phoneNumber,
     DOB: formatDate(user.dateOfBirth),
-    Gender: user.gender,
-    Age: user.age,
-    Father: user.father,
-    Mother: user.mother,
-    Place: user.place,
-<<<<<<< HEAD
-      Category: user.category || "", 
-    Status:
-    user.status?.toLowerCase() === "subscribe"
-      ? "Subscribe"
-      : "Unsubscribe",
-=======
-    Status: user.status,
->>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
-    "Created Date": formatDate(user.createdAt), // 👈 formatted date
-  }));
+      Gender: user.gender,
+      Age: user.age,
+      Father: user.father,
+      Mother: user.mother,
+      Status: user.status,
+    }));
 
-  const worksheet = XLSX.utils.json_to_sheet(excelData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
 
-  const excelBuffer = XLSX.write(workbook, {
-    bookType: "xlsx",
-    type: "array",
-  });
-  const dataBlob = new Blob([excelBuffer], {
-    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  });
-  saveAs(dataBlob, "UserData.xlsx");
-};
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const dataBlob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(dataBlob, "UserData.xlsx");
+  };
 
-<<<<<<< HEAD
-const filteredUsers = getFilteredByDateAndCategory().filter((u) =>
-    u.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-const indexOfLastUser = currentPage * rowsPerPage;
-const indexOfFirstUser = indexOfLastUser - rowsPerPage;
-const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
-=======
-
-const filteredUsers = getFilteredByDate().filter((u) =>
-  u.name.toLowerCase().includes(searchTerm.toLowerCase())
-);
-
+  const filteredUsers = users.filter((u) => u.name.toLowerCase().includes(searchTerm.toLowerCase()));
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
->>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const categories = ["all", ...new Set(users.map((u) => u.category).filter(Boolean))];
-
-
-
-
-
 
   return (
     <div style={containerStyle}>
-          <Toaster position="top-right" reverseOrder={false} />
       {showForm && (
         <div style={overlayStyle}>
           <div style={modalStyle}>
-            <h2 style={{ marginBottom: "20px" }}>
-              {editUserId ? "Edit User" : "Add New User"}
-            </h2>
+            <h2 style={{ marginBottom: "20px" }}>{editUserId ? "Edit User" : "Add New User"}</h2>
             <form onSubmit={handleSubmit} style={formStyle}>
               <div style={formGrid}>
-                {[
-                  "name",
-
-                  "phoneNumber",
-                  "dateOfBirth",
-                  "gender",
-                  "age",
-                  "father",
-                  "mother",
-                  "place",
-                ].map((key) => (
+                {["name", "email", "phoneNumber", "dateOfBirth", "gender", "age","father","mother" ].map((key) => (
                   <div key={key} style={inputGroupStyle}>
                     <label style={labelStyle}>
-                      {key.charAt(0).toUpperCase() +
-                        key
-                          .slice(1)
-                          .replace("phoneNumber", "Phone Number")
-                          .replace("dateOfBirth", "Date of Birth")}
+                      {key.charAt(0).toUpperCase() + key.slice(1).replace("phoneNumber", "Phone Number").replace("dateOfBirth", "Date of Birth")}
                     </label>
                     <input
-                      type={
-                        key === "dateOfBirth"
-                          ? "date"
-                          : key === "age"
-                          ? "number"
-                          : "text"
-                      }
+                      type={key === "dateOfBirth" ? "date" : key === "age" ? "number" : "text"}
                       name={key}
                       value={formData[key]}
                       onChange={handleChange}
@@ -372,34 +183,9 @@ const filteredUsers = getFilteredByDate().filter((u) =>
                     <option value="unsubscribe">Unsubscribe</option>
                   </select>
                 </div> */}
-                <div style={inputGroupStyle}>
-  <label style={labelStyle}>Category</label>
-  <input
-    type="text"
-    name="category"
-    value={formData.category}
-    onChange={handleChange}
-    required
-    style={inputStyle}
-  />
-</div>
-
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  marginTop: 20,
-                }}
-              >
-                <button
-                  type="button"
-                  style={cancelBtnStyle}
-                  onClick={() => {
-                    setShowForm(false);
-                    setEditUserId(null);
-                  }}
-                >
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
+                <button type="button" style={cancelBtnStyle} onClick={() => { setShowForm(false); setEditUserId(null); }}>
                   Cancel
                 </button>
                 <button type="submit" style={submitBtnStyle}>
@@ -412,94 +198,12 @@ const filteredUsers = getFilteredByDate().filter((u) =>
       )}
 
       <div style={topHeaderStyle}>
-        <h2 style={{ fontSize: "20px", fontWeight: 600, marginLeft: 40 }}>
-          Users Details
-        </h2>
-       <div style={{ display: "flex", gap: "10px", marginRight: 70 }}>
-<<<<<<< HEAD
-
-        <select
-  value={categoryFilter}
-  onChange={(e) => setCategoryFilter(e.target.value)}
-  style={{
-    padding: "8px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    fontSize: "14px",
-  }}
->
-  {categories.map((cat, idx) => (
-    <option key={idx} value={cat}>
-      {cat === "all" ? "All Categories" : cat}
-    </option>
-  ))}
-</select>
-
-=======
->>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
-          <select
-            value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value)}
-            style={{
-              padding: "8px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              fontSize: "14px",
-            }}
-          >
-            <option value="all">All Data</option>
-            <option value="thisMonth">This Month</option>
-            <option value="lastMonth">Last Month</option>
-            <option value="custom">Custom Period</option>
-          </select>
-
-         {dateFilter === "custom" && (
-  <>
-   <DatePicker
-      selected={customStart ? new Date(customStart) : null}
-      onChange={(date) => setCustomStart(date)}
-      dateFormat="dd/MM/yyyy"
-      placeholderText="dd/mm/yyyy"
-      customInput={
-        <input
-          style={inputStyle} 
-          readOnly
-        />
-      }
-    />
-  <DatePicker
-      selected={customEnd ? new Date(customEnd) : null}
-      onChange={(date) => setCustomEnd(date)}
-      dateFormat="dd/MM/yyyy"
-      placeholderText="dd/mm/yyyy"
-      customInput={
-        <input
-          style={inputStyle} 
-          readOnly
-        />
-      }
-    />
-
-  </>
-)}
-
-
-<<<<<<< HEAD
-  <button style={addBtnStyle} onClick={() => setShowForm(true)}>
-    Add New User
-  </button>
-=======
-
->>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
-          <button style={inviteBtnStyle} onClick={handleDownloadExcel}>
-            Download Excel
-          </button>
-          <button style={inviteBtnStyles} onClick={() => navigate("/BulkUser")}>
-            Add Bulk Users
-          </button>
-
+        <h2 style={{ fontSize: "20px", fontWeight: 600, marginLeft: 40 }}>Users Details</h2>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button style={addBtnStyle} onClick={() => setShowForm(true)}> + Add User </button>
+          <button style={inviteBtnStyle} onClick={handleDownloadExcel}> Download Excel </button>
+          <button style={inviteBtnStyle} onClick={() => navigate("/BulkUser")}> Add Bulk Users </button>
         </div>
-
       </div>
 
       <input
@@ -516,40 +220,26 @@ const filteredUsers = getFilteredByDate().filter((u) =>
             <tr style={theadStyle}>
               <th style={{ ...thStyle, width: "60px" }}>SL</th>
               <th style={{ ...thStyle, width: "150px" }}>Name</th>
-
+              <th style={{ ...thStyle, width: "150px" }}>Email</th>
               <th style={{ ...thStyle, width: "110px" }}>Phone</th>
               <th style={{ ...thStyle, width: "100px" }}>DOB</th>
               <th style={{ ...thStyle, width: "80px" }}>Gender</th>
               <th style={{ ...thStyle, width: "60px" }}>Age</th>
-              <th style={{ ...thStyle, width: "80px" }}>Father</th>
-              <th style={{ ...thStyle, width: "80px" }}>Mother</th>
-              <th style={{ ...thStyle, width: "150px" }}>Place</th>
+             <th style={{ ...thStyle, width: "80px" }}>Father</th> 
+             <th style={{ ...thStyle, width: "80px" }}>Mother</th>
               <th style={{ ...thStyle, width: "90px" }}>Unique ID</th>
 
               <th style={{ ...thStyle, width: "90px" }}>Status</th>
-<<<<<<< HEAD
-              <th style={{ ...thStyle, width: "120px" }}>Category</th>
 
-=======
->>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
-               <th style={{ ...thStyle, width: "110px" }}>Created Date</th>
               <th style={{ ...thStyle, width: "80px" }}>Action</th>
             </tr>
           </thead>
           <tbody>
             {currentUsers.map((user, index) => (
               <tr key={user._id} style={rowStyle}>
+                <td style={tdStyle}>{String(indexOfFirstUser + index + 1).padStart(2, "0")}</td>
                 <td style={tdStyle}>
-                  {String(indexOfFirstUser + index + 1).padStart(2, "0")}
-                </td>
-                <td style={tdStyle}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <img
                       src={`https://ui-avatars.com/api/?name=${user.name}&background=random`}
                       alt="avatar"
@@ -558,46 +248,32 @@ const filteredUsers = getFilteredByDate().filter((u) =>
                     <span>{user.name}</span>
                   </div>
                 </td>
-
+                <td style={tdStyle}>{user.email}</td>
                 <td style={tdStyle}>{user.phoneNumber}</td>
                 <td style={tdStyle}>{formatDate(user.dateOfBirth)}</td>
                 <td style={tdStyle}>{user.gender}</td>
                 <td style={tdStyle}>{user.age}</td>
                 <td style={tdStyle}>{user.father}</td>
                 <td style={tdStyle}>{user.mother}</td>
-                <td style={tdStyle}>{user.place}</td>
                 <td style={tdStyle}>{user.uniqueId}</td>
 
                 <td style={tdStyle}>
-                <span
-  style={{
-    padding: "4px 10px",
-    borderRadius: "20px",
-    fontWeight: 600,
-    fontSize: "12px",
-    backgroundColor:
-      user.status?.toLowerCase() === "subscribe" ? "#DEF7EC" : "#FEE2E2",
-    color:
-      user.status?.toLowerCase() === "subscribe" ? "#03543F" : "#B91C1C",
-  }}
->
-  {user.status?.toLowerCase() === "subscribe" ? "Active" : "Inactive"}
-</span>
-
+                  <span
+                    style={{
+                      padding: "4px 10px",
+                      borderRadius: "20px",
+                      fontWeight: 600,
+                      fontSize: "12px",
+                      backgroundColor: user.status === "subscribe" ? "#DEF7EC" : "#FEE2E2",
+                      color: user.status === "subscribe" ? "#03543F" : "#B91C1C",
+                    }}
+                  >
+                    {user.status === "subscribe" ? "Active" : "Inactive"}
+                  </span>
                 </td>
-<<<<<<< HEAD
-                <td style={tdStyle}>{user.category}</td>
-
-=======
->>>>>>> e459d12c0756971fcf7e58e7e3012e6b190da818
-                    <td style={tdStyle}>{formatDate(user.createdAt)}</td>
                 <td style={{ ...tdStyle, textAlign: "center" }}>
                   <FaEdit
-                    style={{
-                      marginRight: 10,
-                      cursor: "pointer",
-                      color: "#4A5568",
-                    }}
+                    style={{ marginRight: 10, cursor: "pointer", color: "#4A5568" }}
                     onClick={() => handleEdit(user)}
                   />
                   <FaTrash
@@ -610,60 +286,36 @@ const filteredUsers = getFilteredByDate().filter((u) =>
           </tbody>
         </table>
 
-   <div style={paginationWrapper}>
-  {/* Rows per page selector */}
-  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-    <span style={{ fontSize: "14px", color: "#555" }}>Rows per page:</span>
-    <select
-      value={rowsPerPage}
-      onChange={(e) => {
-        setRowsPerPage(Number(e.target.value));
-        setCurrentPage(1); // reset to first page
-      }}
-      style={{
-        padding: "6px 10px",
-        borderRadius: "6px",
-        border: "1px solid #ccc",
-        fontSize: "14px",
-        cursor: "pointer",
-      }}
-    >
-      <option value={5}>5</option>
-      <option value={10}>10</option>
-      <option value={25}>25</option>
-    </select>
-  </div>
-
-  {/* Page info */}
-  <div style={{ fontSize: "14px", color: "#555" }}>
-    {`${indexOfFirstUser + 1}-${Math.min(indexOfLastUser, filteredUsers.length)} of ${filteredUsers.length}`}
-  </div>
-
-  {/* Prev Button */}
-  <button
-    style={{
-      ...paginationBtn,
-      ...(currentPage === 1 ? disabledBtn : {}),
-    }}
-    onClick={() => paginate(currentPage - 1)}
-    disabled={currentPage === 1}
-  >
-    ⬅
-  </button>
-
-  {/* Next Button */}
-  <button
-    style={{
-      ...paginationBtn,
-      ...(currentPage === totalPages ? disabledBtn : {}),
-    }}
-    onClick={() => paginate(currentPage + 1)}
-    disabled={currentPage === totalPages}
-  >
-    ➡
-  </button>
-</div>
-
+        <div style={paginationStyle}>
+          <button
+            style={{ ...paginationBtnStyle, ...(currentPage === 1 ? disabledBtnStyle : {}) }}
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <div style={pageNumbersStyle}>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+              <button
+                key={number}
+                style={{
+                  ...paginationBtnStyle,
+                  ...(currentPage === number ? activePageBtnStyle : {}),
+                }}
+                onClick={() => paginate(number)}
+              >
+                {number}
+              </button>
+            ))}
+          </div>
+          <button
+            style={{ ...paginationBtnStyle, ...(currentPage === totalPages ? disabledBtnStyle : {}) }}
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -690,73 +342,19 @@ const topHeaderStyle = {
   marginBottom: "20px",
 };
 
-const paginationWrapper = {
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  marginTop: "24px",
-  gap: "12px",
-};
-const pageNumbersWrapper = {
-  display: "flex",
-  gap: "6px",
-};
-
-const paginationBtn = {
-  padding: "8px 14px",
-  border: "1px solid #ddd",
-  borderRadius: "6px",
-  backgroundColor: "#fff",
-  cursor: "pointer",
-  fontSize: "14px",
-  transition: "all 0.2s ease",
-};
-
-const activePageBtn = {
-  backgroundColor: "#0a5e52",
-  color: "#fff",
-  border: "1px solid #0a5e52",
-  fontWeight: 600,
-};
-
-const disabledBtn = {
-  backgroundColor: "#f1f5f9",
-  color: "#94a3b8",
-  cursor: "not-allowed",
-};
-
-const ellipsisStyle = {
-  padding: "8px 10px",
-  fontSize: "14px",
-  color: "#6b7280",
-};
-
 const inviteBtnStyle = {
   padding: "10px 16px",
-  backgroundColor: "#359834",
+  backgroundColor: "#0BC5EA",
   color: "#fff",
   border: "none",
   borderRadius: "8px",
   fontWeight: 600,
   cursor: "pointer",
-  fontFamily: "Poppins, sans-serif",
-  fontSize: 16,
-};
-const inviteBtnStyles = {
-  padding: "10px 16px",
-  backgroundColor: "#139786de",
-  color: "#fff",
-  border: "none",
-  borderRadius: "8px",
-  fontWeight: 600,
-  cursor: "pointer",
-  fontFamily: "Poppins, sans-serif",
-  fontSize: 16,
 };
 
 const addBtnStyle = {
   padding: "10px 16px",
-  backgroundColor: "#0a5e52",
+  backgroundColor: "#38B2AC",
   color: "#fff",
   border: "none",
   borderRadius: "8px",
@@ -776,7 +374,7 @@ const searchInputStyle = {
 
 const tableStyle = {
   // width: "100%",
-  maxWidth: "100%",
+  maxWidth:'100%',
   borderCollapse: "separate",
   borderSpacing: "0 10px",
   tableLayout: "fixed",
@@ -785,7 +383,7 @@ const tableStyle = {
 };
 
 const theadStyle = {
-  background: "linear-gradient(to right, #0a5e52, #0a5e52)",
+  background: "linear-gradient(to right, #2C7A7B, #38B2AC)",
   color: "#fff",
 };
 
@@ -879,7 +477,7 @@ const cancelBtnStyle = {
 
 const submitBtnStyle = {
   padding: "10px 16px",
-  backgroundColor: "#0a5e52",
+  backgroundColor: "#38B2AC",
   color: "#fff",
   border: "none",
   borderRadius: "8px",
@@ -910,7 +508,7 @@ const pageNumbersStyle = {
 };
 
 const activePageBtnStyle = {
-  backgroundColor: "#0a5e52",
+  backgroundColor: "#38B2AC",
   color: "#fff",
   border: "none",
 };
@@ -920,10 +518,3 @@ const disabledBtnStyle = {
   color: "#999",
   cursor: "not-allowed",
 };
-const customdateinput = {
- padding: "10px 12px",
-  borderRadius: "8px",
-  border: "1px solid #ccc",
-  fontSize: "14px",
-  outline: "none",
-}

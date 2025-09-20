@@ -16,7 +16,7 @@ const Banner = () => {
 
   const fetchBanners = async () => {
     try {
-      const response = await axios.get("https://api.svkangrowhealth.com/api/banners");
+      const response = await axios.get("http://localhost:8011/api/banners");
       setBanners(response.data.banners);
       setTotalPages(Math.ceil(response.data.banners.length / itemsPerPage));
     } catch (error) {
@@ -44,13 +44,9 @@ const Banner = () => {
     formData.append("image", selectedFile);
 
     try {
-      const response = await axios.post(
-        "https://api.svkangrowhealth.com/api/banners/upload",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      const response = await axios.post("http://localhost:8011/api/banners/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       setBanners([response.data.banner, ...banners]);
       setSelectedFile(null);
       document.getElementById("bannerInput").value = ""; // Reset file input
@@ -64,7 +60,7 @@ const Banner = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this banner?")) {
       try {
-        await axios.delete(`https://api.svkangrowhealth.com/api/banners/${id}`);
+        await axios.delete(`http://localhost:8011/api/banners/${id}`);
         setBanners(banners.filter((banner) => banner._id !== id));
         fetchBanners();
       } catch (error) {
@@ -86,8 +82,7 @@ const Banner = () => {
         <div style={formContainerStyle}>
           <h2 style={headingStyle}>Add Banner</h2>
           <p style={infoTextStyle}>
-            Banner Image:{" "}
-            <strong>( Recommended Size: 625 x 250 pixels )</strong>
+            Banner Image: <strong>( Recommended Size: 625 x 250 pixels )</strong>
           </p>
           <input
             id="bannerInput"
@@ -123,11 +118,12 @@ const Banner = () => {
                         {(currentPage - 1) * itemsPerPage + index + 1}
                       </td>
                       <td style={tableCell}>
-                        <img
-                          src={banner.imageUrl} // ✅ Use returned image URL
-                          alt={`Banner ${index + 1}`}
-                          style={bannerImageStyle}
-                        />
+                    <img
+  src={banner.imageUrl} // ✅ Use returned image URL
+  alt={`Banner ${index + 1}`}
+  style={bannerImageStyle}
+/>
+
                       </td>
                       <td style={tableCell}>
                         <button
@@ -145,9 +141,7 @@ const Banner = () => {
               <div style={paginationStyle}>
                 <button
                   style={paginationBtnStyle}
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                 >
                   Previous
@@ -157,9 +151,7 @@ const Banner = () => {
                 </span>
                 <button
                   style={paginationBtnStyle}
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                  }
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
                 >
                   Next
@@ -222,7 +214,7 @@ const fileInputStyle = {
 };
 
 const uploadBtnStyle = {
-  backgroundColor: "#0a5e52",
+  backgroundColor: "#329694",
   color: "#fff",
   padding: "8px 20px",
   border: "none",
@@ -301,7 +293,7 @@ const paginationStyle = {
 };
 
 const paginationBtnStyle = {
-  backgroundColor: "#0a5e52",
+  backgroundColor: "#329694",
   color: "#fff",
   border: "none",
   padding: "8px 16px",
